@@ -1,5 +1,5 @@
 {
-  "name": "efureev/type-normalizer",
+  "name": "efureev/php-type-normalizer",
   "description": "Normalize any types",
   "license": "MIT",
   "type": "library",
