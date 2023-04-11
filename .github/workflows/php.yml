@@ -1,0 +1,59 @@
+name: PHP Package
+
+on: [ push ]
+
+jobs:
+
+  testing:
+    name: Test on PHP ${{ matrix.php }} with ${{ matrix.setup }} dependencies
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        setup: [ 'stable' ]
+        php: [ '8.2' ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2 # Action page: <https://github.com/shivammathur/setup-php>
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring
+          coverage: xdebug
+
+      - name: Get Composer Cache Directory # Docs: <https://github.com/actions/cache/blob/master/examples.md#php---composer>
+        id: composer-cache
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Validate composer.json
+        run: composer validate
+
+      - name: Install [STABLE] Composer dependencies
+        if: matrix.setup == 'stable'
+        run: composer update --prefer-dist --no-interaction --no-suggest --prefer-stable
+
+      - name: Composer DUMP
+        run: composer dump-autoload -o
+
+      - name: Show most important packages' versions
+        run: composer info | grep -e phpunit/phpunit
+
+      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+      # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+      - name: Run test suite
+        run: composer test
