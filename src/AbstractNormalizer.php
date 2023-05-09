@@ -78,7 +78,7 @@ abstract class AbstractNormalizer
     public function fromString(string $value): mixed
     {
         $from = trim($value);
-        $to = $this->fromStringFilter($from);
+        $to   = $this->fromStringFilter($from);
         if ($to === null) {
             throw $this->throwException($value);
         }
