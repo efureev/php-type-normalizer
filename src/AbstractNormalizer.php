@@ -78,7 +78,7 @@ abstract class AbstractNormalizer
     public function fromString(string $value): mixed
     {
         $from = trim($value);
-        $to   = $this->fromStringFilter($from);
+        $to = $this->fromStringFilter($from);
         if ($to === null) {
             throw $this->throwException($value);
         }
@@ -99,7 +99,7 @@ abstract class AbstractNormalizer
     protected function checkForScalar(mixed $value): void
     {
         if (!is_scalar($value) && $value !== null) {
-            throw new Exceptions\NeedScalarValue(__CLASS__, $value);
+            throw new Exceptions\NeedScalarValue(static::class, $value);
         }
     }
 
