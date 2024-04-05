@@ -6,6 +6,7 @@ namespace TypeNormalizer;
 
 /**
  * @method bool normalize(mixed $value)
+ * @method bool throwException(mixed $value)
  */
 class BoolNormalizer extends AbstractNormalizer
 {
@@ -23,7 +24,7 @@ class BoolNormalizer extends AbstractNormalizer
             return $result;
         }
 
-        throw $this->throwException($value);
+        return $this->throwException($value);
     }
 
     protected function fromStringFilter(string $value): ?bool
@@ -50,7 +51,7 @@ class BoolNormalizer extends AbstractNormalizer
             return $boolVal;
         }
 
-        throw $this->throwException($value);
+        return $this->throwException($value);
     }
 
     public function fromBool(bool $value): bool

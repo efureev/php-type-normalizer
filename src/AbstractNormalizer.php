@@ -11,6 +11,10 @@ abstract class AbstractNormalizer
     /** @var array<callable|array{callable, mixed}> */
     private array $mw = [];
 
+    public function __construct(protected bool $silent = false)
+    {
+    }
+
     private function normalizeValue(mixed $value): mixed
     {
         $normValue = $this->tapValue($value);
@@ -47,7 +51,7 @@ abstract class AbstractNormalizer
             is_integer($normValue) => $this->fromInteger($normValue),
             is_float($normValue) => $this->fromFloat($normValue),
             is_bool($normValue) => $this->fromBool($normValue),
-            default => throw $this->throwException($value),
+            default => $this->throwException($value),
         };
 
         return $this->mwPipeline($resValue);
@@ -80,7 +84,7 @@ abstract class AbstractNormalizer
         $from = trim($value);
         $to   = $this->fromStringFilter($from);
         if ($to === null) {
-            throw $this->throwException($value);
+            return $this->throwException($value);
         }
 
         return $to;
@@ -106,7 +110,16 @@ abstract class AbstractNormalizer
     /**
      * @throws Exceptions\FailedNormalize
      */
-    protected function throwException(mixed $value): Exceptions\FailedNormalize
+    protected function throwException(mixed $value): mixed
+    {
+        if (!$this->silent) {
+            throw $this->buildException($value);
+        }
+
+        return $this->fromNull();
+    }
+
+    protected function buildException(mixed $value): Exceptions\FailedNormalize
     {
         return new Exceptions\FailedNormalize(static::class, $value);
     }

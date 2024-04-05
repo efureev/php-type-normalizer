@@ -6,6 +6,7 @@ namespace TypeNormalizer;
 
 /**
  * @method int normalize(mixed $value)
+ * @method int throwException(mixed $value)
  */
 class IntegerNormalizer extends AbstractNormalizer
 {
@@ -23,7 +24,7 @@ class IntegerNormalizer extends AbstractNormalizer
             return $result;
         }
 
-        throw $this->throwException($value);
+        return $this->throwException($value);
     }
 
     protected function fromStringFilter(string $value): ?int
