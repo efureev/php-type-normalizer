@@ -17,6 +17,16 @@ class BoolNormalizer extends AbstractNormalizer
         return false;
     }
 
+    public static function isTrue(mixed $value): bool
+    {
+        return (new static())->normalize($value) === true;
+    }
+
+    public static function isFalse(mixed $value): bool
+    {
+        return (new static())->normalize($value) === false;
+    }
+
     public function fromFloat(float $value): bool
     {
         $result = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
